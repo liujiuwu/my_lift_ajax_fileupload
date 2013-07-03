@@ -1,18 +1,16 @@
 package code.lib
 
-import net.liftweb.http.JsonResponse
-import net.liftweb.http.rest.RestHelper
-import net.liftweb.http.{ InMemoryResponse, StreamingResponse }
-import net.liftweb.http.S
+import java.io.File
+import java.io.FileOutputStream
+import net.liftweb.common.Box
+import net.liftweb.http.BadResponse
 import net.liftweb.http.FileParamHolder
+import net.liftweb.http.InMemoryResponse
+import net.liftweb.http.rest.RestHelper
 import net.liftweb.json.JsonAST.JValue
 import net.liftweb.json.JsonDSL._
-import net.liftweb.common.{ Box, Full }
-import net.liftweb.http.BadResponse
 import net.liftweb.util.StringHelpers
-import mongo.MongoStorage
-import java.io.FileOutputStream
-import java.io.File
+import com.sksamuel.scrimage.Image
 
 object UploadManager extends RestHelper {
   serve {
@@ -20,10 +18,15 @@ object UploadManager extends RestHelper {
       def saveImage(fph: FileParamHolder) = {
         val imageName = StringHelpers.randomString(16)
         val fileName = fph.fileName
+        
+        val in = fph.fileStream
+
         var output = new FileOutputStream(new File("d:\\tmp\\" + fileName))
-        output.write(fph.file)
-        output.close()
+       // output.write(Image(in).resize(600))
+        //output.close()
         println(fileName)
+        
+        
         /*MongoStorage.mongoGridFS(fph.fileStream)(fh =>
           { fh.filename = imageName; fh.contentType = fph.mimeType })*/
 
