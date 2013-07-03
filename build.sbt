@@ -14,10 +14,14 @@ scanDirectories in Compile := Nil
 //resolvers += "Java.net Maven2 Repository" at "http://download.java.net/maven/2/"
 
 // you can also add multiple repositories at the same time
+//resolvers ++= Seq(
+//  "Scala Tools Releases" at "http://scala-tools.org/repo-releases/",
+//  "Java.net Maven2 Repository" at "http://download.java.net/maven/2/"
+//)
+
 resolvers ++= Seq(
-  "Scala Tools Releases" at "http://scala-tools.org/repo-releases/",
-  "Java.net Maven2 Repository" at "http://download.java.net/maven/2/"
-)
+	"aliyun nexus" at "http://42.120.5.18:9081/nexus/content/groups/public/"
+) 
 
 // if you have issues pulling dependencies from the scala-tools repositories (checksums don't match), you can disable checksums
 //checksums := Nil

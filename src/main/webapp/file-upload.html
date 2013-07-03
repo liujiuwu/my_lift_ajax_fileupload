@@ -1,8 +1,11 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
 <meta content="text/html; charset=UTF-8" http-equiv="content-type" />
 <title>Home</title>
+
+
+
 </head>
 <body class="lift:content_id=main">
 	<div id="main" class="lift:surround?with=default;at=content">
@@ -10,17 +13,115 @@
       <script type="text/javascript" src="js/jquery.ui.widget.min.js"></script>
       <script type="text/javascript" src="js/jquery.iframe-transport.js"></script>
       <script type="text/javascript" src="js/jquery.fileupload.js"></script>
+	  <script type="text/javascript" src="js/jquery.Jcrop.js"></script>
+	  <link rel="stylesheet" href="css/jquery.Jcrop.css" type="text/css" />
     </span>
     <script type="text/javascript">
       // <![CDATA[
       $(function(){
-        $("#file-upload").fileupload({dataType:'json', url:'/uploading', dropZone:$('#image'),
+        /*$("#file-upload").fileupload({dataType:'json', url:'/uploading', dropZone:$('#image'),
         done:function(e, data){$("#image").html("<img src='images/" + data.result.name + "' height='380' width='340' />");}
-        });
+        });*/
+
+        var jcrop_api,
+        boundx,
+        boundy,
+		// Grab some information about the preview pane
+        $preview = $('#preview-pane'),
+        $pcnt = $('#preview-pane .preview-container'),
+        $pimg = $('#preview-pane .preview-container img'),
+		xsize = $pcnt.width(),
+        ysize = $pcnt.height();
+
+        $("#mimage").Jcrop(
+			{
+			onChange: updatePreview,
+			onSelect: updatePreview,
+			allowSelect:false,
+			allowResize:false,
+			setSelect: [ 0, 0, 150, 100 ]
+
+	     },function(){
+      // Use the API to get the real image size
+      var bounds = this.getBounds();
+      boundx = bounds[0];
+      boundy = bounds[1];
+      // Store the API in the jcrop_api variable
+      jcrop_api = this;
+
+      // Move the preview into the jcrop container for css positioning
+      $preview.appendTo(jcrop_api.ui.holder);
+    });
+
+        
+		 function updatePreview(c)
+		{
+		  if (parseInt(c.w) > 0)
+		  {
+			var rx = xsize / c.w;
+			var ry = ysize / c.h;
+
+			$pimg.css({
+			  width: Math.round(rx * boundx) + 'px',
+			  height: Math.round(ry * boundy) + 'px',
+			  marginLeft: '-' + Math.round(rx * c.x) + 'px',
+			  marginTop: '-' + Math.round(ry * c.y) + 'px'
+			});
+		  }
+		};
+
+
       });
+
+
+	 
+
       // ]]>
       </script>
-      <div id="image" style="width:340px; height:380px; background:gray"><span>Drop image here</span></div>
+	  
+	  <style type="text/css">
+
+/* Apply these styles only when #preview-pane has
+   been placed within the Jcrop widget */
+.jcrop-holder #preview-pane {
+  display: block;
+  position: absolute;
+  z-index: 2000;
+  top: 10px;
+  right: -380px;
+  padding: 6px;
+  border: 1px rgba(0,0,0,.4) solid;
+  background-color: white;
+
+  -webkit-border-radius: 6px;
+  -moz-border-radius: 6px;
+  border-radius: 6px;
+
+  -webkit-box-shadow: 1px 1px 5px 2px rgba(0, 0, 0, 0.2);
+  -moz-box-shadow: 1px 1px 5px 2px rgba(0, 0, 0, 0.2);
+  box-shadow: 1px 1px 5px 2px rgba(0, 0, 0, 0.2);
+}
+
+/* The Javascript code will set the aspect ratio of the crop
+   area based on the size of the thumbnail preview,
+   specified here */
+#preview-pane .preview-container {
+  width: 150px;
+  height: 100px;
+  overflow: hidden;
+}
+
+</style>
+
+      <!--div id="image" style="width:340px; height:380px; background:gray"><span>Drop image here</span></div-->
+	  <img src="images/mm.jpg" id="mimage"/>
+	  <br/>
+      <div id="preview-pane">
+		<div class="preview-container">
+		  <img src="images/mm.jpg" class="jcrop-preview" alt="Preview" />
+		</div>
+	  </div>
+	  <br/>
       <form id="file-upload" action="/uploading" method="POST" enctype="multipart/form-data">
         <input type="file" name="file[]" />
       </form>

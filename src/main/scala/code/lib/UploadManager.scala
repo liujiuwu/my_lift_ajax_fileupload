@@ -3,7 +3,6 @@ package code.lib
 import java.io.File
 import java.io.FileOutputStream
 import net.liftweb.common.Box
-import net.liftweb.http.BadResponse
 import net.liftweb.http.FileParamHolder
 import net.liftweb.http.InMemoryResponse
 import net.liftweb.http.rest.RestHelper
@@ -11,6 +10,8 @@ import net.liftweb.json.JsonAST.JValue
 import net.liftweb.json.JsonDSL._
 import net.liftweb.util.StringHelpers
 import com.sksamuel.scrimage.Image
+import com.sksamuel.scrimage.ScaleMethod._
+import net.liftweb.http.JsonResponse
 
 object UploadManager extends RestHelper {
   serve {
@@ -21,11 +22,14 @@ object UploadManager extends RestHelper {
         
         val in = fph.fileStream
 
-        var output = new FileOutputStream(new File("d:\\tmp\\" + fileName))
-       // output.write(Image(in).resize(600))
-        //output.close()
+        var out = new FileOutputStream(new File("d:\\tmp\\" + fileName))
+       /* out.write(fph.file)
+        out.close()*/
         println(fileName)
         
+        //Image(in).resize(100).write(output)
+        Image(in).write(out) 
+        out.close()
         
         /*MongoStorage.mongoGridFS(fph.fileStream)(fh =>
           { fh.filename = imageName; fh.contentType = fph.mimeType })*/
@@ -42,13 +46,13 @@ object UploadManager extends RestHelper {
         ("Content-Type", "text/plain") :: Nil, Nil, 200)
     }
 
-    case "serving" :: imageName :: Nil Get req => {
+    /*case "serving" :: imageName :: Nil Get req => {
       MongoStorage.mongoGridFS.findOne(imageName) match {
         case Some(image) =>
           val imageStream = image.inputStream
           StreamingResponse(imageStream, () => imageStream.close(), image.length, ("Content-Type", image.contentType.get) :: Nil, Nil, 200)
         case _ => new BadResponse
       }
-    }
+    }*/
   }
 }
