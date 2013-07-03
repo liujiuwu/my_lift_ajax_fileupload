@@ -10,34 +10,40 @@ import net.liftweb.json.JsonDSL._
 import net.liftweb.common.{ Box, Full }
 import net.liftweb.http.BadResponse
 import net.liftweb.util.StringHelpers
-
 import mongo.MongoStorage
+import java.io.FileOutputStream
+import java.io.File
 
 object UploadManager extends RestHelper {
   serve {
     case "uploading" :: Nil Post req => {
-         def saveImage(fph: FileParamHolder) = {
-         val imageName = StringHelpers.randomString(16)
-                MongoStorage.mongoGridFS(fph.fileStream)(fh => 
-                { fh.filename = imageName; fh.contentType = fph.mimeType })
+      def saveImage(fph: FileParamHolder) = {
+        val imageName = StringHelpers.randomString(16)
+        val fileName = fph.fileName
+        var output = new FileOutputStream(new File("d:\\tmp\\" + fileName))
+        output.write(fph.file)
+        output.close()
+        println(fileName)
+        /*MongoStorage.mongoGridFS(fph.fileStream)(fh =>
+          { fh.filename = imageName; fh.contentType = fph.mimeType })*/
 
-                ("name" -> imageName) ~ ("type" -> fph.mimeType) ~ ("size" -> fph.length)
-          }
-
-          val ojv: Box[JValue] = req.uploadedFiles.map(fph => saveImage(fph)).headOption
-          val ajv = ("name" -> "n/a") ~ ("type" -> "n/a") ~ ("size" -> 0L)
-          val ret = ojv openOr ajv
-         
-          val jr = JsonResponse(ret).toResponse.asInstanceOf[InMemoryResponse]
-          InMemoryResponse(jr.data, ("Content-Length", jr.data.length.toString) ::
-            ("Content-Type", "text/plain") :: Nil, Nil, 200)
+        ("name" -> fileName) ~ ("type" -> fph.mimeType) ~ ("size" -> fph.length)
       }
+
+      val ojv: Box[JValue] = req.uploadedFiles.map(fph => saveImage(fph)).headOption
+      val ajv = ("name" -> "n/a") ~ ("type" -> "n/a") ~ ("size" -> 0L)
+      val ret = ojv openOr ajv
+
+      val jr = JsonResponse(ret).toResponse.asInstanceOf[InMemoryResponse]
+      InMemoryResponse(jr.data, ("Content-Length", jr.data.length.toString) ::
+        ("Content-Type", "text/plain") :: Nil, Nil, 200)
+    }
 
     case "serving" :: imageName :: Nil Get req => {
       MongoStorage.mongoGridFS.findOne(imageName) match {
         case Some(image) =>
           val imageStream = image.inputStream
-          StreamingResponse(imageStream, () => imageStream.close(), image.length, ("Content-Type", image.contentType) :: Nil, Nil, 200)
+          StreamingResponse(imageStream, () => imageStream.close(), image.length, ("Content-Type", image.contentType.get) :: Nil, Nil, 200)
         case _ => new BadResponse
       }
     }

@@ -15,12 +15,12 @@
       // <![CDATA[
       $(function(){
         $("#file-upload").fileupload({dataType:'json', url:'/uploading', dropZone:$('#image'),
-        done:function(e, data){$("#image").html("<img src='serving/" + data.result.name + "' height='480' width='640' />");}
+        done:function(e, data){$("#image").html("<img src='images/" + data.result.name + "' height='380' width='340' />");}
         });
       });
       // ]]>
       </script>
-      <div id="image" style="width:640px; height:480px; background:gray"><span>Drop image here</span></div>
+      <div id="image" style="width:340px; height:380px; background:gray"><span>Drop image here</span></div>
       <form id="file-upload" action="/uploading" method="POST" enctype="multipart/form-data">
         <input type="file" name="file[]" />
       </form>

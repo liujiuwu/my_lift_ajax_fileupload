@@ -2,7 +2,7 @@ name := "fileupload"
 
 version := "0.1-SNAPSHOT"
 
-scalaVersion := "2.9.1"
+scalaVersion := "2.10.0"
  
 seq(webSettings: _*)
 
@@ -23,7 +23,7 @@ resolvers ++= Seq(
 //checksums := Nil
 
 libraryDependencies ++= {
-  val liftVersion = "2.4" // Put the current/latest lift version here
+  val liftVersion = "2.5" // Put the current/latest lift version here
   Seq("net.liftweb" %% "lift-webkit" % liftVersion % "compile->default")
 }
 
@@ -39,5 +39,5 @@ libraryDependencies ++= Seq(
 )
 
 //Casbah - mongo driver
-libraryDependencies += "com.mongodb.casbah" %% "casbah" % "2.1.5-1"
+libraryDependencies += "org.mongodb" %% "casbah" % "2.6.2"
 
