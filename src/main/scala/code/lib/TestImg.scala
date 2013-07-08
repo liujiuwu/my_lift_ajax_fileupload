@@ -14,42 +14,20 @@ object TestImg {
 
   def main(args: Array[String]): Unit = {
 
-    var in = new FileInputStream(new File("d:\\tmp\\mm.jpg"))
+    var in = new FileInputStream(new File("d:\\tmp\\14742309.jpg"))
     var out = new FileOutputStream(new File("d:\\tmp\\rest.jpg"))
 
-    /*val maxWidth = 200
-    val maxHeight = 350
-
     val originalImage = ImageIO.read(in)
-
     val height = originalImage.getHeight
     val width = originalImage.getWidth
-
-    if (width <= maxWidth && height <= maxHeight) {
-      Image(originalImage).write(out)
-      out.close()
-      return
-    }
-    
-    var scaledWidth = width
-    var scaledHeight = height
-    val ratio: Double = width / height
-    if (scaledWidth > maxWidth) {
-      scaledWidth = maxWidth
-      scaledHeight = (scaledWidth.doubleValue / ratio).intValue
-    }
-    if (scaledHeight > maxHeight) {
-      scaledHeight = maxHeight
-      scaledWidth = (scaledHeight.doubleValue * ratio).intValue
-    }
-
-    Image(originalImage).scaleTo(scaledWidth, scaledHeight).write(out)
-    out.close()*/
+    val st = g(width, height)
+    Image(originalImage).scaleTo(st._1, st._2).write(out)
+    out.close()
 
     //val buf = ImageResizer.resize(in, 200, 150)
     //ImageIO.write(buf, "jpg", out)
 
-    Thumbnails.of(new File("d:\\tmp\\14742313.jpg"))
+    /*Thumbnails.of(new File("d:\\tmp\\14742313.jpg"))
       .size(400, 400)
       .outputQuality(1f)
       .toFile(new File("d:\\tmp\\rest.jpg"));
@@ -66,8 +44,30 @@ object TestImg {
       .sourceRegion(10, 20, 100, 50)  
       .outputQuality(1f)
        //.watermark(Positions.CENTER, ImageIO.read(new File("d:\\tmp\\ajax-loader.gif")), 0.5f)
-      .toFile(new File("d:\\tmp\\rest3.jpg"));
+      .toFile(new File("d:\\tmp\\rest3.jpg"));*/
 
+    /* Thumbnails.of(in)
+      .size(400, 300).sourceRegion(0,0, 400, 300)
+      .outputQuality(1f)
+      .toFile(new File("d:\\tmp\\rest.jpg"));
+*/
+  }
+
+  def g(width: Int, height: Int, maxWidth: Int = 400, maxHeight: Int = 300): (Int, Int) = {
+    if (width <= maxWidth && height <= maxHeight) {
+      return (width, height)
+    }
+
+    var scaledWidth = maxWidth
+    var scaledHeight = maxHeight
+    if (width > height) {
+      scaledWidth = maxWidth
+      scaledHeight = height * scaledWidth / width
+    } else {
+      scaledHeight = maxHeight
+      scaledWidth = width * scaledHeight / height
+    }
+    (scaledWidth, scaledHeight)
   }
 
 }
