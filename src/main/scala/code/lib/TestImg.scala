@@ -9,20 +9,33 @@ import javax.imageio.ImageIO
 import net.coobird.thumbnailator.Thumbnails
 import java.awt.Point
 import net.coobird.thumbnailator.geometry.Positions
-
+import com.sksamuel.scrimage.Position._
 object TestImg {
 
   def main(args: Array[String]): Unit = {
 
-    var in = new FileInputStream(new File("d:\\tmp\\14742309.jpg"))
+    var in = new FileInputStream(new File("d:\\tmp\\10600116.jpg.png"))
     var out = new FileOutputStream(new File("d:\\tmp\\rest.jpg"))
+    var in2 = new FileInputStream(new File("d:\\tmp\\rest.jpg"))
+    var out2 = new FileOutputStream(new File("d:\\tmp\\rest2.jpg"))
 
     val originalImage = ImageIO.read(in)
     val height = originalImage.getHeight
     val width = originalImage.getWidth
     val st = g(width, height)
-    Image(originalImage).scaleTo(st._1, st._2).write(out)
+    if (width > 400 && height > 300) {
+      Image(originalImage).fit(400, 300).write(out)
+    } else {
+      Image(originalImage).write(out)
+    }
+    //Image(in2).fit(320, 200).write(out2)
+    out2.close()
     out.close()
+
+    Thumbnails.of("d:\\tmp\\rest.jpg")
+      .size(320, 200).sourceRegion(10, 40, 320, 200)
+      .outputQuality(1f)
+      .toFile(new File("d:\\tmp\\rest3.jpg"));
 
     //val buf = ImageResizer.resize(in, 200, 150)
     //ImageIO.write(buf, "jpg", out)

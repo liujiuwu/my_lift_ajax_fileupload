@@ -38,8 +38,8 @@ libraryDependencies ++= Seq(
   "org.mortbay.jetty" % "jetty" % "6.1.22" % "test",
   "junit" % "junit" % "4.8" % "test->default", // For JUnit 4 testing
   "javax.servlet" % "servlet-api" % "2.5" % "provided->default",
-  "com.sksamuel.scrimage" % "scrimage-core" % "1.3.0",
-    "com.sksamuel.scrimage" % "scrimage-filters" % "1.3.0",
+  "com.sksamuel.scrimage" % "scrimage-core" % "1.3.1",
+    "com.sksamuel.scrimage" % "scrimage-filters" % "1.3.1",
     "net.coobird" % "thumbnailator" % "0.4.5",
   "ch.qos.logback" % "logback-classic" % "0.9.26" % "compile->default" // Logging
 )
